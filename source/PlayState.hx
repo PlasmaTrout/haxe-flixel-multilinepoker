@@ -35,6 +35,7 @@ class PlayState extends FlxState
 	private var _clickedRow = -1;
 	private var _clickedCard = -1;
 	private var _swipeDirection:SwipeDirection = SwipeDirection.None;
+	private var _results:Array<PokerResult> = [PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None];
 
 	
 	private var CARD_SPACING:Int=10;
@@ -207,14 +208,24 @@ class PlayState extends FlxState
 				var currentCard = _hands[row][card];
 				//currentCard.x = horizontalPositions[card];
 				//currentCard.y = rowPositions[row];
-				FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
+				if(row == 4 && card == 4){
+					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
+					1.0,{ease: FlxEase.backOut, startDelay: delay, complete: dealComplete });
+				}else{
+					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
 					1.0,{ease: FlxEase.backOut, startDelay: delay});
+				}
+				
 				delay = delay + 0.01;
 				MouseEventManager.add(currentCard, cardClicked);
 			}
 		}
 		
 		
+	}
+
+	private function dealComplete(tween:FlxTween):Void{
+		checkHands();
 	}
 
 	private function cardClicked(object:FlxObject):Void{
@@ -229,6 +240,14 @@ class PlayState extends FlxState
 		}
 
 		trace("Clicked Row:"+_clickedRow+" Card:"+_clickedCard);
+	}
+
+	private function checkHands(){
+		for(h in 0..._hands.length){
+			var result = HandChecker.getResult(_hands[h]);
+			trace(result);
+			_results[h] = result;
+		}
 	}
 
 	private function swapCards(){

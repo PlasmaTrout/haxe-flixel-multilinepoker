@@ -13,7 +13,7 @@ class Card extends FlxSprite
 
 	public var cardNumber:Int;
 	public var label:String;
-	public var value:String;
+	public var value:Int;
 	public var suit:String;
 	public var suitNumber:Int;
 	public var symbol:String;
@@ -26,6 +26,7 @@ class Card extends FlxSprite
 		super(initialX,initialY);
 		cardNumber = cardnumber;
 		suitNumber = suitnumber;
+		value = (cardNumber+1)*(suitNumber+1);
 		determineCardSuit(suitnumber);
 		determineCardLabel(cardnumber);
 		var path = "assets/cards/card_"+this.label+this.suit+".png";
