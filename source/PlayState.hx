@@ -8,6 +8,10 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flash.events.Event;
+import flixel.FlxObject;
+import flixel.plugin.MouseEventManager;
+
 using flixel.util.FlxSpriteUtil;
 /**
  * A FlxState which can be used for the actual gameplay.
@@ -28,6 +32,10 @@ class PlayState extends FlxState
 	private var _maker:DeckMaker;
 	private var _level:Int = 30;
 	private var _hands:Array<Array<Card>> = [];
+	private var _clickedRow = -1;
+	private var _clickedCard = -1;
+	private var _swipeDirection:SwipeDirection = SwipeDirection.None;
+
 	
 	private var CARD_SPACING:Int=10;
 	
@@ -64,6 +72,32 @@ class PlayState extends FlxState
 	 */
 	override public function update():Void
 	{
+		for(swipe in FlxG.swipes){
+	
+		if(swipe.distance <= 150){
+			if(swipe.angle < 0){
+				if(swipe.angle >= -45){
+					_swipeDirection = SwipeDirection.Up;
+				}else if(swipe.angle <= -135){
+					_swipeDirection = SwipeDirection.Down;
+				}else{
+					_swipeDirection = SwipeDirection.Left;
+				}
+			}else{
+				if(swipe.angle <= 45){
+					_swipeDirection = SwipeDirection.Up;
+				}else if(swipe.angle >= 135){
+					_swipeDirection = SwipeDirection.Down;
+				}else{
+					_swipeDirection = SwipeDirection.Right;
+				}
+			}
+			
+			swapCards();
+			trace("Swiped "+_swipeDirection+" angle "+swipe.angle+" distance "+swipe.distance);
+			}
+		}
+
 		super.update();
 	}
 
@@ -114,13 +148,19 @@ class PlayState extends FlxState
 		_discardArea = new FlxSprite();
 		_discardArea.loadGraphic("assets/images/discardarea2.png");
 		_discardArea.x =  50;
-		_discardArea.y = 100;
+		_discardArea.y = 120;
 		add(_discardArea);
+
+		
 	}	
 
 	private function initDeck():Void{
 		_maker = new DeckMaker();
 
+	}
+
+	private function dealClicked(event:Event):Void{
+		trace("Deal clicked!");
 	}
 
 	private function deal():Void{
@@ -170,9 +210,58 @@ class PlayState extends FlxState
 				FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
 					1.0,{ease: FlxEase.backOut, startDelay: delay});
 				delay = delay + 0.01;
+				MouseEventManager.add(currentCard, cardClicked);
 			}
 		}
 		
 		
+	}
+
+	private function cardClicked(object:FlxObject):Void{
+		var card = cast(object,Card);
+		for(row in 0..._hands.length){
+			var index = _hands[row].indexOf(card);
+			if(index != -1){
+				_clickedRow = row;
+				_clickedCard = index;
+				break;
+			}
+		}
+
+		trace("Clicked Row:"+_clickedRow+" Card:"+_clickedCard);
+	}
+
+	private function swapCards(){
+		var cardA = _hands[_clickedRow][_clickedCard];
+		var cardB:Card = null;
+
+		if(_clickedCard <= 3 && _swipeDirection == SwipeDirection.Right){
+			cardB = _hands[_clickedRow][_clickedCard+1];
+			_hands[_clickedRow][_clickedCard] = cardB;
+			_hands[_clickedRow][_clickedCard+1] = cardA;
+		}
+
+		if(_clickedCard > 0 && _swipeDirection == SwipeDirection.Left){
+			cardB = _hands[_clickedRow][_clickedCard-1];
+			_hands[_clickedRow][_clickedCard] = cardB;
+			_hands[_clickedRow][_clickedCard-1] = cardA;
+		}
+
+		if(_clickedRow <= 3 && _swipeDirection == SwipeDirection.Down){
+			cardB = _hands[_clickedRow+1][_clickedCard];
+			_hands[_clickedRow][_clickedCard] = cardB;
+			_hands[_clickedRow+1][_clickedCard] = cardA;
+		}
+
+		if(_clickedRow > 0 && _swipeDirection == SwipeDirection.Up){
+			cardB = _hands[_clickedRow-1][_clickedCard];
+			_hands[_clickedRow][_clickedCard] = cardB;
+			_hands[_clickedRow-1][_clickedCard] = cardA;
+		}
+
+		if(cardB != null){
+			FlxTween.tween(cardA,{ x: cardB.x, y: cardB.y },0.1);
+			FlxTween.tween(cardB,{ x: cardA.x, y: cardA.y },0.1);
+		}
 	}
 }
