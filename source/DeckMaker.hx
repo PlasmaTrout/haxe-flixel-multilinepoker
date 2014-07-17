@@ -31,6 +31,12 @@ class DeckMaker {
 		trace("Deck of "+Deck.length+" created!");
 	}
 
+	public function shuffle(times:Int){
+		for(c in 0...times){
+			shuffleDeck();
+		}
+	}
+
 	public function shuffleDeck(){
 		var value = Math.floor(Math.random() * 20);
 		value = value + 20;

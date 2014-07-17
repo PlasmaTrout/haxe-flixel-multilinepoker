@@ -151,6 +151,8 @@ class PlayState extends FlxState
 
 	private function deal():Void{
 
+		_maker.shuffle(10);
+		
 		_hands.push(new Array<Card>());
 
 		if(_level >= 5){
