@@ -7,6 +7,8 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 using flixel.util.FlxSpriteUtil;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 
 class DeckMaker {
 
@@ -49,8 +51,10 @@ class DeckMaker {
 
 	public function discard(cards:Array<Card>){
 		for(c in 0...cards.length){
+			FlxTween.tween(cards[c],{ x: Card.initialX, y: Card.initialY }, 1.0);
 			Deck.push(cards[c]);
 		}
+		trace("Deck has "+Deck.length+" in it now!");
 	}
 
 	public function addCardsToDisplay(){

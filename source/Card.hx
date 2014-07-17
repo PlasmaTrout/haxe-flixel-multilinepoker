@@ -19,8 +19,8 @@ class Card extends FlxSprite
 	public var symbol:String;
 	private var suitList:Array<String> = ["Spades","Hearts","Diamonds","Clubs"];
 	private var labels:Array<String> = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
-	private var initialX:Int = 900;
-	private var initialY:Int = 700;
+	public static var initialX:Int = 1050;
+	public static var initialY:Int = 700;
 
 	public function new(suitnumber:Int,cardnumber:Int) {
 		super(initialX,initialY);

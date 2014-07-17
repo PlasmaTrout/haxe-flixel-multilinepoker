@@ -73,31 +73,7 @@ class PlayState extends FlxState
 	 */
 	override public function update():Void
 	{
-		for(swipe in FlxG.swipes){
-	
-		if(swipe.distance <= 150){
-			if(swipe.angle < 0){
-				if(swipe.angle >= -45){
-					_swipeDirection = SwipeDirection.Up;
-				}else if(swipe.angle <= -135){
-					_swipeDirection = SwipeDirection.Down;
-				}else{
-					_swipeDirection = SwipeDirection.Left;
-				}
-			}else{
-				if(swipe.angle <= 45){
-					_swipeDirection = SwipeDirection.Up;
-				}else if(swipe.angle >= 135){
-					_swipeDirection = SwipeDirection.Down;
-				}else{
-					_swipeDirection = SwipeDirection.Right;
-				}
-			}
-			
-			swapCards();
-			trace("Swiped "+_swipeDirection+" angle "+swipe.angle+" distance "+swipe.distance);
-			}
-		}
+		
 
 		super.update();
 	}
@@ -152,6 +128,8 @@ class PlayState extends FlxState
 		_discardArea.y = 120;
 		add(_discardArea);
 
+		MouseEventManager.add( _dealButton , dealClicked);
+
 		
 	}	
 
@@ -160,8 +138,15 @@ class PlayState extends FlxState
 
 	}
 
-	private function dealClicked(event:Event):Void{
-		trace("Deal clicked!");
+	private function dealClicked(object:FlxObject):Void{
+		for(h in 0..._hands.length){
+			var discard = _hands[h].splice(0,5);
+			_maker.discard(discard);
+		}
+
+		_hands.splice(0,_hands.length);
+		deal();
+		
 	}
 
 	private function deal():Void{
@@ -206,18 +191,17 @@ class PlayState extends FlxState
 		for(row in 0..._hands.length){
 			for(card in 0..._hands[row].length){
 				var currentCard = _hands[row][card];
-				//currentCard.x = horizontalPositions[card];
-				//currentCard.y = rowPositions[row];
+				trace("Animating card "+card+" in row "+row);
 				if(row == 4 && card == 4){
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
-					1.0,{ease: FlxEase.backOut, startDelay: delay, complete: dealComplete });
+					1.2,{ease: FlxEase.elasticOut, startDelay: delay, complete: dealComplete });
 				}else{
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
-					1.0,{ease: FlxEase.backOut, startDelay: delay});
+					1.2,{ease: FlxEase.elasticOut, startDelay: delay});
 				}
 				
-				delay = delay + 0.01;
-				MouseEventManager.add(currentCard, cardClicked);
+				delay = delay + 0.03;
+				MouseEventManager.add(currentCard, cardClicked,cardReleased);
 			}
 		}
 		
@@ -240,6 +224,36 @@ class PlayState extends FlxState
 		}
 
 		trace("Clicked Row:"+_clickedRow+" Card:"+_clickedCard);
+	}
+
+	private function cardReleased(object:FlxObject):Void{
+		
+		var swipe = FlxG.swipes[0];
+	
+		if (swipe != null){
+		if(swipe.distance <= 150){
+			if(swipe.angle < 0){
+				if(swipe.angle >= -45){
+					_swipeDirection = SwipeDirection.Up;
+				}else if(swipe.angle <= -135){
+					_swipeDirection = SwipeDirection.Down;
+				}else{
+					_swipeDirection = SwipeDirection.Left;
+				}
+			}else{
+				if(swipe.angle <= 45){
+					_swipeDirection = SwipeDirection.Up;
+				}else if(swipe.angle >= 135){
+					_swipeDirection = SwipeDirection.Down;
+				}else{
+					_swipeDirection = SwipeDirection.Right;
+				}
+			}
+			
+			swapCards();
+			trace("Swiped "+_swipeDirection+" angle "+swipe.angle+" distance "+swipe.distance);
+			}
+		}
 	}
 
 	private function checkHands(){
@@ -281,6 +295,7 @@ class PlayState extends FlxState
 		if(cardB != null){
 			FlxTween.tween(cardA,{ x: cardB.x, y: cardB.y },0.1);
 			FlxTween.tween(cardB,{ x: cardA.x, y: cardA.y },0.1);
+			trace("Swapping "+cardA.label+" with "+cardB.label);
 		}
 	}
 }
