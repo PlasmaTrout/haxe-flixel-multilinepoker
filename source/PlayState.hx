@@ -152,7 +152,7 @@ class PlayState extends FlxState
 	private function deal():Void{
 
 		_maker.shuffle(10);
-		
+
 		_hands.push(new Array<Card>());
 
 		if(_level >= 5){
@@ -198,6 +198,7 @@ class PlayState extends FlxState
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
 					1.2,{ease: FlxEase.elasticOut, startDelay: delay, complete: dealComplete });
 				}else{
+					currentCard.centerOrigin();
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
 					1.2,{ease: FlxEase.elasticOut, startDelay: delay});
 				}
