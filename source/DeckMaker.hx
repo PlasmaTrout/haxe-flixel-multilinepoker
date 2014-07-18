@@ -52,7 +52,18 @@ class DeckMaker {
 
 	public function deal(number:Int):Array<Card>{
 		var cards = Deck.splice(0,number);
+		cards.sort(cardSort);
 		return cards;
+	}
+
+	public static function cardSort(a:Card,b:Card){
+		if(a.cardNumber > b.cardNumber){
+			return -1;
+		}
+		if(a.cardNumber < b.cardNumber){
+			return 1;
+		}
+		return 0;
 	}
 
 	public function discard(cards:Array<Card>){

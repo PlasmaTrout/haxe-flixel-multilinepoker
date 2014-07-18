@@ -34,7 +34,7 @@ class PlayState extends FlxState
 	private var _lockbar20:LockBar;
 	private var _lockbar30:LockBar;
 	private var _maker:DeckMaker;
-	private var _level:Int = 30;
+	private var _level:Int = 1;
 	private var _hands:Array<Array<Card>> = [];
 	private var _clickedRow = -1;
 	private var _clickedCard = -1;
@@ -42,6 +42,7 @@ class PlayState extends FlxState
 	private var _results:Array<PokerResult> = [PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None];
 	private var _glowFilter:GlowFilter;
 	private var _spriteFilter:FlxSpriteFilter;
+	private var _moves:Int;
 	
 	private var CARD_SPACING:Int=10;
 	
@@ -78,7 +79,7 @@ class PlayState extends FlxState
 	 */
 	override public function update():Void
 	{
-
+		_movesValueText.text = Std.string(_moves);
 		super.update();
 	}
 
@@ -149,13 +150,10 @@ class PlayState extends FlxState
 
 		add(invisDiscardBox);
 		MouseEventManager.add( invisDiscardBox , null , discardReleased);
-
-		
 	}	
 
 	private function initDeck():Void{
 		_maker = new DeckMaker();
-
 	}
 
 	private function dealClicked(object:FlxObject):Void{
@@ -194,12 +192,26 @@ class PlayState extends FlxState
 			_hands[h] = _maker.deal(5);
 		}
 
+		if(_level > 5){
+			_moves = 2 * _hands.length;
+		}else{
+			_moves = 2+(_level - 1);
+		}
+
 		animateHands();
 	}
 
 	private function discardReleased(object:FlxObject):Void{
 		if(_clickedRow != -1 && _clickedCard != -1){
-			trace("Dicarding card!");
+			var card = _hands[_clickedRow][_clickedCard];
+			_maker.discard([card]);
+			
+			var newHand = _maker.deal(1);
+			_hands[_clickedRow][_clickedCard] = newHand[0];
+			_hands[_clickedRow].sort(DeckMaker.cardSort);
+			_moves--;
+			animateHands();
+
 			resetSelection();
 		}
 	}
@@ -210,8 +222,7 @@ class PlayState extends FlxState
 			_hands[_clickedRow][_clickedCard].clearFilters();
 		}
 		_clickedRow = -1;
-		_clickedCard = -1;
-		
+		_clickedCard = -1;		
 	}
 
 	private function animateHands():Void{
@@ -229,8 +240,8 @@ class PlayState extends FlxState
 		for(row in 0..._hands.length){
 			for(card in 0..._hands[row].length){
 				var currentCard = _hands[row][card];
-				trace("Animating card "+card+" in row "+row);
-				if(row == 4 && card == 4){
+				//trace("Animating card "+card+" in row "+row);
+				if(row == (_hands.length-1) && card == 4){
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
 					1.2,{ease: FlxEase.elasticOut, startDelay: delay, complete: dealComplete });
 				}else{
@@ -243,25 +254,30 @@ class PlayState extends FlxState
 				MouseEventManager.add(currentCard, cardClicked,cardReleased);
 			}
 		}
-		
-		
 	}
 
 	private function dealComplete(tween:FlxTween):Void{
+		trace("deal completed!");
 		checkHands();
 	}
 
 	private function cardClicked(object:FlxObject):Void{
-		resetSelection();
-		var card = cast(object,Card);
-		for(row in 0..._hands.length){
-			var index = _hands[row].indexOf(card);
-			if(index != -1){
-				_clickedRow = row;
-				_clickedCard = index;
-				card.addFilter();
-				break;
+
+		if(_moves > 0){
+			resetSelection();
+			var card = cast(object,Card);
+			for(row in 0..._hands.length){
+				var index = _hands[row].indexOf(card);
+				if(index != -1){
+					_clickedRow = row;
+					_clickedCard = index;
+					card.addFilter();
+					break;
+				}
 			}
+		}else{
+			_moves = 0;
+			
 		}
 
 		trace("Clicked Row:"+_clickedRow+" Card:"+_clickedCard);
@@ -271,7 +287,7 @@ class PlayState extends FlxState
 		
 		var swipe = FlxG.swipes[0];
 	
-		if (swipe != null){
+		if (swipe != null && _moves > 0){
 		if(swipe.distance <= 150 && swipe.distance > 10){
 			if(swipe.angle < 0){
 				if(swipe.angle >= -45){
@@ -300,7 +316,7 @@ class PlayState extends FlxState
 	private function checkHands(){
 		for(h in 0..._hands.length){
 			var result = HandChecker.getResult(_hands[h]);
-			trace(result);
+			trace("Row "+h+" has "+result);
 			_results[h] = result;
 		}
 	}
@@ -341,9 +357,10 @@ class PlayState extends FlxState
 			trace("Swapping "+cardA.label+" with "+cardB.label);
 		}
 
+		_moves--;
 		cardA.clearFilters();
 		cardB.clearFilters();
-		
+
 		resetSelection();
 	}
 }

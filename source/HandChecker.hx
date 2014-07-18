@@ -32,6 +32,33 @@ class HandChecker {
 			result = PokerResult.Pair;
 		}
 
+		if(count(cardTable.keys()) == 2){
+			if(highestValue(cardTable) == 4){
+				result = PokerResult.FourOfAKind;
+			}else{
+				result = PokerResult.FullHouse;
+			}
+		}
+
+		if(count(cardTable.keys()) == 3){
+			if(highestValue(cardTable) == 3){
+				result = PokerResult.Triple;
+			}else{
+				result = PokerResult.TwoPair;
+			}
+		}
+
+		if(count(suitTable.keys()) == 1){
+			result = PokerResult.Flush;
+		}
+
+		if(hasStraight(values)){
+			if(result == PokerResult.Flush){
+				result = PokerResult.StraightFlush;
+			}else{
+				result = PokerResult.Straight;
+			}
+		}
 		return result;
 	}
 
@@ -42,6 +69,50 @@ class HandChecker {
 			count++;
 		}
 		return count;
+	}
+
+	public static function highestValue(map:Map<String,Int>):Int{
+		var highest = 0;
+		var it = map.keys();
+
+		while(it.hasNext()){
+			var key = it.next();
+			if(map[key] > highest){
+				highest = map[key];
+			}
+		}
+
+		return highest;
+	}
+
+	public static function hasStraight(values:Array<Int>):Bool{
+		var hasStraight = false;
+
+		var diff = 0;
+		var previous = 0;
+		var cardInOrder = 0;
+
+		for(x in 0...values.length){
+			if(previous == 0){
+				previous = values[x];
+				cardInOrder++;
+			}else{
+				diff = values[x] - previous;
+				previous = values[x];
+				if(diff == 1){
+					cardInOrder++;
+				}else{
+					break;
+				}
+			}
+		}
+
+
+		if(cardInOrder == 5){
+			hasStraight = true;
+		}
+
+		return hasStraight;
 	}
 
 	public static function sortFunction(x:Int,y:Int){

@@ -10,6 +10,7 @@ import flixel.effects.FlxSpriteFilter;
 import flash.filters.BitmapFilter;
 import flixel.tweens.FlxTween;
 import flash.filters.GlowFilter;
+import flixel.tweens.FlxEase;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -74,6 +75,11 @@ class Card extends FlxSprite
 
 	public override function update():Void{
 		_spriteFilter.applyFilters();
+	}
+
+	public function moveBackToOrigin(){
+
+		FlxTween.tween(this,{ x: initialX, y: initialY },1.2,{ease: FlxEase.elasticIn});
 	}
 
 }
