@@ -34,7 +34,7 @@
 		<font path="fonts/IMPACT.TTF" id="IMPACT"/>
 	</assets>
 	<!--------------------------------LIBRARIES------------------------------------->
-
+	<set name="no-custom-backend" />
 	<haxelib name="flixel"/>
 
 	

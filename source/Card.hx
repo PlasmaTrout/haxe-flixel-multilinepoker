@@ -6,6 +6,11 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
+import flixel.effects.FlxSpriteFilter;
+import flash.filters.BitmapFilter;
+import flixel.tweens.FlxTween;
+import flash.filters.GlowFilter;
+
 using flixel.util.FlxSpriteUtil;
 
 class Card extends FlxSprite
@@ -21,7 +26,9 @@ class Card extends FlxSprite
 	private var labels:Array<String> = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
 	public static var initialX:Int = 1050;
 	public static var initialY:Int = 700;
-
+	public var _spriteFilter:FlxSpriteFilter;
+	public var _tween:FlxTween;
+	
 	public function new(suitnumber:Int,cardnumber:Int) {
 		super(initialX,initialY);
 		cardNumber = cardnumber;
@@ -31,6 +38,8 @@ class Card extends FlxSprite
 		determineCardLabel(cardnumber);
 		var path = "assets/cards/card_"+this.label+this.suit+".png";
 		loadGraphic(path);
+		_spriteFilter = new FlxSpriteFilter(this,10,10);
+		
 	}
 	
 
@@ -46,8 +55,25 @@ class Card extends FlxSprite
 		return label+suit;
 	}
 
-	public function printCard(){
+	public function printCard():Void{
 		trace("Card: "+this.label+" of "+this.suit);
+	}
+
+	public function addFilter():Void{
+		var glowFilter = new GlowFilter(0xFFFFFF, 1, 16, 16, 1.5, flash.filters.BitmapFilterQuality.HIGH,false,false);
+		_tween = FlxTween.tween(glowFilter , { blurX: 1, blurY: 1},0.3,{ type: FlxTween.PINGPONG });
+		_spriteFilter.addFilter(glowFilter);
+	}
+
+	public function clearFilters():Void{
+		_spriteFilter.removeAllFilters();
+		if(_tween != null){
+			_tween.destroy();
+		}
+	}
+
+	public override function update():Void{
+		_spriteFilter.applyFilters();
 	}
 
 }
