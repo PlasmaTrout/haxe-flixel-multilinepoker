@@ -49,6 +49,8 @@ class PlayState extends FlxState
 	private var _lineSprite:FlxSprite;
 	private var rowPositions:Array<Int> = [100,220,340,450,560];
 	private var _dealLocked:Bool = false;
+	private var _score:Int;
+	private var _bet:Int;
 	
 	private var CARD_SPACING:Int=10;
 	
@@ -62,7 +64,8 @@ class PlayState extends FlxState
 	{
 		_bg = new FlxSprite(0,0,"assets/images/Background3.png");
 		add(_bg);
-
+		_score = 0;
+		_bet = 10 * _level;
 		
 		initUILayer();	
 		initLockBars();
@@ -93,6 +96,7 @@ class PlayState extends FlxState
 	override public function update():Void
 	{
 		_movesValueText.text = Std.string(_moves);
+		_scoreValueText.text = Std.string(_score);
 		super.update();
 	}
 
@@ -372,7 +376,9 @@ class PlayState extends FlxState
 				_floaters[h].alpha = 0;
 				_floaters[h].size = 100;
 				_floaters[h].screenCenter(true,false);
-				addScore(100,h);
+
+				var score = getScore(result);
+				addScore(score,h);
 			}
 			
 
@@ -393,7 +399,7 @@ class PlayState extends FlxState
 		}
 	}
 
-	private function addScore(score:Float,floater:Int){
+	private function addScore(score:Int,floater:Int){
 		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 32 , true);
 		scoreText.color = FlxColor.RED;
 		scoreText.font = "IMPACT";
@@ -402,6 +408,7 @@ class PlayState extends FlxState
 		FlxTween.tween(scoreText,{ x: _scoreValueText.x, y: _scoreValueText.y },0.5,
 		 { complete: function(x){
 		 		remove(scoreText);
+		 		_score = _score+score;
 		 	} });
 	}
 
@@ -446,5 +453,33 @@ class PlayState extends FlxState
 		cardB.clearFilters();
 
 		resetSelection();
+	}
+
+	private function getScore(presult:PokerResult):Int{
+		var result = 0;
+
+		switch(presult){
+			case PokerResult.Pair:
+				result = _bet;
+			case PokerResult.TwoPair:
+				result = _bet*2;
+			case PokerResult.Triple:
+				result = _bet*3;
+			case PokerResult.Straight:
+				result = _bet*5;
+			case PokerResult.Flush:
+				result = _bet*8;
+			case PokerResult.StraightFlush:
+				result = _bet*50;
+		    case PokerResult.FullHouse:
+		    	result = _bet*10;
+			case PokerResult.RoyalFlush:
+				result = _bet*200;
+			case PokerResult.FourOfAKind:
+				result = _bet*40;
+			case PokerResult.None:
+		}
+
+		return result;
 	}
 }

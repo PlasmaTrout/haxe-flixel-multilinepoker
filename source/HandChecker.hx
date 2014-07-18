@@ -26,9 +26,9 @@ class HandChecker {
 
 			
 		}
-		trace(values);
+		
 		values.sort(sortFunction);
-		trace(values);
+		
 		if(count(cardTable.keys()) == 4){
 			result = PokerResult.Pair;
 		}
@@ -53,7 +53,9 @@ class HandChecker {
 			result = PokerResult.Flush;
 		}
 
-		if(hasStraight(values)){
+		var straight = hasStraight(values);
+
+		if(straight){
 			if(result == PokerResult.Flush){
 				result = PokerResult.StraightFlush;
 			}else{
@@ -90,21 +92,23 @@ class HandChecker {
 		var hasStraight = false;
 
 		var diff = 0;
-		var previous = 0;
+		var previous = -1;
 		var cardInOrder = 0;
 		trace(values);
-		for(x in values.length...0){
+		for(x in 0...values.length){
 			
-			if(previous == 0){
+			if(previous == -1){
 				previous = values[x];
+				trace("first card is "+previous);
 				cardInOrder++;
 			}else{
 				diff = values[x] - previous;
+				trace(diff);
 				previous = values[x];
 				if(diff == 1){
 					cardInOrder++;
 				}else{
-					break;
+					
 				}
 			}
 		}
@@ -114,13 +118,13 @@ class HandChecker {
 			hasStraight = true;
 		}
 
-		trace(cardInOrder);
+		trace("Cards in order "+cardInOrder);
 		return hasStraight;
 	}
 
 	public static function sortFunction(x:Int,y:Int){
-		if(x < y) { return 1; }
-		if(x > y) { return -1; }
+		if(x < y) { return -1; }
+		if(x > y) { return 1; }
 		return 0;
 	}
 }
