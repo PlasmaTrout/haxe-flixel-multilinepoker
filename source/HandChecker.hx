@@ -6,10 +6,11 @@ class HandChecker {
 
 		var suitTable = new Map<String,Int>();
 		var cardTable = new Map<String,Int>();
-		var values = [];
+		var values = [0,0,0,0,0];
 
 		for(c in 0..._hand.length){
 			var card = _hand[c];
+			values[c] = card.cardNumber;
 
 			if(suitTable.exists(card.suit)){
 				suitTable[card.suit] = suitTable[card.suit]+1;
@@ -23,11 +24,11 @@ class HandChecker {
 				cardTable[card.label] = 1;
 			}
 
-			values.push(card.value);
+			
 		}
-
+		trace(values);
 		values.sort(sortFunction);
-
+		trace(values);
 		if(count(cardTable.keys()) == 4){
 			result = PokerResult.Pair;
 		}
@@ -91,8 +92,9 @@ class HandChecker {
 		var diff = 0;
 		var previous = 0;
 		var cardInOrder = 0;
-
-		for(x in 0...values.length){
+		trace(values);
+		for(x in values.length...0){
+			
 			if(previous == 0){
 				previous = values[x];
 				cardInOrder++;
@@ -112,10 +114,13 @@ class HandChecker {
 			hasStraight = true;
 		}
 
+		trace(cardInOrder);
 		return hasStraight;
 	}
 
 	public static function sortFunction(x:Int,y:Int){
-		return x-y;
+		if(x < y) { return 1; }
+		if(x > y) { return -1; }
+		return 0;
 	}
 }

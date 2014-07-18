@@ -16,6 +16,8 @@ import flash.filters.BlurFilter;
 import flash.filters.DropShadowFilter;
 import flash.filters.GlowFilter;
 import flixel.effects.FlxSpriteFilter;
+import flixel.util.FlxColor;
+import flixel.util.FlxSpriteUtil.LineStyle;
 using flixel.util.FlxSpriteUtil;
 /**
  * A FlxState which can be used for the actual gameplay.
@@ -40,9 +42,13 @@ class PlayState extends FlxState
 	private var _clickedCard = -1;
 	private var _swipeDirection:SwipeDirection = SwipeDirection.None;
 	private var _results:Array<PokerResult> = [PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None];
+	private var _floaters:Array<FlxText> = [];
 	private var _glowFilter:GlowFilter;
 	private var _spriteFilter:FlxSpriteFilter;
 	private var _moves:Int;
+	private var _lineSprite:FlxSprite;
+	private var rowPositions:Array<Int> = [100,220,340,450,560];
+	private var _dealLocked:Bool = false;
 	
 	private var CARD_SPACING:Int=10;
 	
@@ -57,12 +63,19 @@ class PlayState extends FlxState
 		_bg = new FlxSprite(0,0,"assets/images/Background3.png");
 		add(_bg);
 
+		
 		initUILayer();	
 		initLockBars();
 		initDeck();
+		initFloaters();
+
 		deal();
 
 		super.create();
+
+		_lineSprite = new FlxSprite();
+		_lineSprite.makeGraphic(FlxG.width,FlxG.height,FlxColor.TRANSPARENT,true);
+		
 	}
 	
 	/**
@@ -98,6 +111,19 @@ class PlayState extends FlxState
     	add(_lockbar30);
     }
 
+    private function initFloaters():Void{
+    	for(v in 0...5){
+    		var floaty = new FlxText(0, 0, -1, "Floater" , 100 , true );
+    		floaty.font = "IMPACT";
+    		floaty.screenCenter();
+ 
+ 			floaty.alpha = 0;
+    		floaty.y = rowPositions[v]+30;
+    		add(floaty);
+
+    		_floaters.push(floaty);
+    	}
+    }
 
 	private function initUILayer():Void{
 		_movesSprite = new FlxSprite();
@@ -157,17 +183,23 @@ class PlayState extends FlxState
 	}
 
 	private function dealClicked(object:FlxObject):Void{
-		for(h in 0..._hands.length){
-			var discard = _hands[h].splice(0,5);
-			_maker.discard(discard);
-		}
+		if(!_dealLocked){
 
-		_hands.splice(0,_hands.length);
-		deal();	
+			for(h in 0..._hands.length){
+				var discard = _hands[h].splice(0,5);
+				_maker.discard(discard);
+			}
+			resetFloaters();
+			_hands.splice(0,_hands.length);
+
+		
+			deal();	
+		}
 	}
 
 	private function deal():Void{
-
+		_dealLocked = true;
+		resetSelection();
 		_maker.shuffle(10);
 
 		_hands.push(new Array<Card>());
@@ -222,13 +254,23 @@ class PlayState extends FlxState
 			_hands[_clickedRow][_clickedCard].clearFilters();
 		}
 		_clickedRow = -1;
-		_clickedCard = -1;		
+		_clickedCard = -1;	
+
+
+	}
+
+	private function resetFloaters():Void{
+		for(f in 0..._floaters.length){
+			_floaters[f].screenCenter(true,false);
+			_floaters[f].size = 100;
+			_floaters[f].alpha = 0;
+		}	
 	}
 
 	private function animateHands():Void{
 		
 		var horizontalPositions = [0,0,0,0,0];
-		var rowPositions = [100,220,340,450,560];
+		
 
 		horizontalPositions[2] = Std.int(FlxG.stage.stageWidth / 2)- 50;
 		horizontalPositions[1] = horizontalPositions[2] - 100 - CARD_SPACING;
@@ -251,7 +293,7 @@ class PlayState extends FlxState
 				}
 				
 				delay = delay + 0.03;
-				MouseEventManager.add(currentCard, cardClicked,cardReleased);
+				MouseEventManager.add(currentCard, cardClicked,cardReleased,cardEnter,cardLeave);
 			}
 		}
 	}
@@ -259,6 +301,15 @@ class PlayState extends FlxState
 	private function dealComplete(tween:FlxTween):Void{
 		trace("deal completed!");
 		checkHands();
+		_dealLocked = false;
+	}
+
+	private function cardEnter(object:FlxObject){
+		
+	}
+
+	private function cardLeave(object:FlxObject){
+		
 	}
 
 	private function cardClicked(object:FlxObject):Void{
@@ -316,9 +367,42 @@ class PlayState extends FlxState
 	private function checkHands(){
 		for(h in 0..._hands.length){
 			var result = HandChecker.getResult(_hands[h]);
-			trace("Row "+h+" has "+result);
-			_results[h] = result;
+			if(result != _results[h]){
+				_results[h] = result;
+				_floaters[h].alpha = 0;
+				_floaters[h].size = 100;
+				_floaters[h].screenCenter(true,false);
+				addScore(100,h);
+			}
+			
+
 		}
+
+		for(r in 0..._results.length){
+			if(_results[r] != PokerResult.None){
+				_floaters[r].alpha = 1;
+				_floaters[r].text = Std.string(_results[r]);
+				
+
+				
+				FlxTween.tween(_floaters[r],{ size: 48, x: 800 },0.1,{ ease: FlxEase.bounceOut });
+			}else{
+				_floaters[r].alpha = 0;
+				_floaters[r].screenCenter(true,false);
+			}
+		}
+	}
+
+	private function addScore(score:Float,floater:Int){
+		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 32 , true);
+		scoreText.color = FlxColor.RED;
+		scoreText.font = "IMPACT";
+		add(scoreText);
+
+		FlxTween.tween(scoreText,{ x: _scoreValueText.x, y: _scoreValueText.y },0.5,
+		 { complete: function(x){
+		 		remove(scoreText);
+		 	} });
 	}
 
 	private function swapCards(){

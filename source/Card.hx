@@ -75,6 +75,8 @@ class Card extends FlxSprite
 
 	public override function update():Void{
 		_spriteFilter.applyFilters();
+		
+
 	}
 
 	public function moveBackToOrigin(){
