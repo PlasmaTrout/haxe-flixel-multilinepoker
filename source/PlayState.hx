@@ -64,7 +64,7 @@ class PlayState extends FlxState
 	{
 		_bg = new FlxSprite(0,0,"assets/images/Background3.png");
 		add(_bg);
-		_score = 0;
+		_score = 50;
 		_bet = 10 * _level;
 		
 		initUILayer();	
@@ -202,6 +202,8 @@ class PlayState extends FlxState
 	}
 
 	private function deal():Void{
+		_score = _score - _bet;
+
 		_dealLocked = true;
 		resetSelection();
 		_maker.shuffle(10);
@@ -286,6 +288,7 @@ class PlayState extends FlxState
 		for(row in 0..._hands.length){
 			for(card in 0..._hands[row].length){
 				var currentCard = _hands[row][card];
+				
 				//trace("Animating card "+card+" in row "+row);
 				if(row == (_hands.length-1) && card == 4){
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
