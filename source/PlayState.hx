@@ -402,16 +402,26 @@ class PlayState extends FlxState
 	}
 
 	private function addScore(score:Int,floater:Int){
-		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 32 , true);
+		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 48 , true);
 		scoreText.color = FlxColor.RED;
 		scoreText.font = "IMPACT";
 		add(scoreText);
 
-		FlxTween.tween(scoreText,{ x: _scoreValueText.x, y: _scoreValueText.y },0.5,
+		/*FlxTween.tween(scoreText,{ x: _scoreValueText.x, y: _scoreValueText.y, size: 48 },0.5,
 		 { complete: function(x){
 		 		remove(scoreText);
 		 		_score = _score+score;
-		 	} });
+		 	} });*/
+		FlxTween.cubicMotion( scoreText , 800 , scoreText.y ,
+		 1024, 50, 100 , 10 ,
+		  _scoreValueText.x , 10, 1.0 ,
+		   { complete: function(x){
+		   		remove(scoreText);
+		   		var newScore = _score+score;
+		   		FlxTween.num(_score,newScore,0.2,{},function(x){
+		   			_score = Std.int(x);
+		   		});
+		   	}});
 	}
 
 	private function swapCards(){
@@ -453,6 +463,7 @@ class PlayState extends FlxState
 		_moves--;
 		cardA.clearFilters();
 		cardB.clearFilters();
+		checkHands();
 
 		resetSelection();
 	}
