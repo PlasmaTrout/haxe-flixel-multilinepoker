@@ -36,7 +36,7 @@ class PlayState extends FlxState
 	private var _lockbar20:LockBar;
 	private var _lockbar30:LockBar;
 	private var _maker:DeckMaker;
-	private var _level:Int = 1;
+	private var _level:Int = 5;
 	private var _hands:Array<Array<Card>> = [];
 	private var _clickedRow = -1;
 	private var _clickedCard = -1;
@@ -101,17 +101,16 @@ class PlayState extends FlxState
 	}
 
     private function initLockBars():Void{
-    	_lockbar10 = new LockBar(0,0,10);
-    	_lockbar10.centerScreen();
+    	_lockbar10 = new LockBar((FlxG.stage.stageWidth/2)-275,rowPositions[2]+25,10);
     	add(_lockbar10);
 
-    	_lockbar5 = new LockBar(_lockbar10.x,_lockbar10.y - 100,5);
+    	_lockbar5 = new LockBar(_lockbar10.x,rowPositions[1]+25,5);
     	add(_lockbar5);
 
-    	_lockbar20 = new LockBar(_lockbar10.x,_lockbar10.y + 100,20);
+    	_lockbar20 = new LockBar(_lockbar10.x,rowPositions[3]+25,20);
     	add(_lockbar20);
 
-    	_lockbar30 = new LockBar(_lockbar20.x,_lockbar20.y + 100,30);
+    	_lockbar30 = new LockBar(_lockbar20.x,rowPositions[4]+25,30);
     	add(_lockbar30);
     }
 
