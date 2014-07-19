@@ -402,8 +402,8 @@ class PlayState extends FlxState
 	}
 
 	private function addScore(score:Int,floater:Int){
-		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 48 , true);
-		scoreText.color = FlxColor.RED;
+		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 42 , true);
+		//scoreText.color = FlxColor.YELLOW;
 		scoreText.font = "IMPACT";
 		add(scoreText);
 
@@ -414,11 +414,11 @@ class PlayState extends FlxState
 		 	} });*/
 		FlxTween.cubicMotion( scoreText , 800 , scoreText.y ,
 		 1024, 50, 100 , 10 ,
-		  _scoreValueText.x , 10, 1.0 ,
+		  _scoreValueText.x+50 , 0, 1.0 ,
 		   { complete: function(x){
 		   		remove(scoreText);
 		   		var newScore = _score+score;
-		   		FlxTween.num(_score,newScore,0.2,{},function(x){
+		   		FlxTween.num(_score,newScore,0.2,{ ease: FlxEase.cubeInOut},function(x){
 		   			_score = Std.int(x);
 		   		});
 		   	}});
