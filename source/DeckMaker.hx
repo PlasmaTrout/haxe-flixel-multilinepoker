@@ -28,7 +28,7 @@ class DeckMaker {
 				Deck.push(card);
 			}
 		}
-		trace("Deck of "+Deck.length+" created!");
+		//trace("Deck of "+Deck.length+" created!");
 	}
 
 	public function shuffle(times:Int){
@@ -71,7 +71,7 @@ class DeckMaker {
 			FlxTween.tween(cards[c],{ x: Card.initialX, y: Card.initialY }, 1.0);
 			Deck.push(cards[c]);
 		}
-		trace("Deck has "+Deck.length+" in it now!");
+		//trace("Deck has "+Deck.length+" in it now!");
 	}
 
 	public function addCardsToDisplay(){

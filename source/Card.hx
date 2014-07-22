@@ -29,6 +29,7 @@ class Card extends FlxSprite
 	public static var initialY:Int = 700;
 	public var _spriteFilter:FlxSpriteFilter;
 	public var _tween:FlxTween;
+	private var _glowFilter:GlowFilter;
 	
 	public function new(suitnumber:Int,cardnumber:Int) {
 		super(initialX,initialY);
@@ -40,7 +41,8 @@ class Card extends FlxSprite
 		var path = "assets/cards/card_"+this.label+this.suit+".png";
 		loadGraphic(path);
 		_spriteFilter = new FlxSpriteFilter(this,10,10);
-		
+		_glowFilter = new GlowFilter(0xFFFFFF, 1, 16, 16, 1.5, flash.filters.BitmapFilterQuality.HIGH,false,false);
+		//_tween = FlxTween.tween(_glowFilter , { blurX: 1, blurY: 1},0.3,{ type: FlxTween.PINGPONG });
 	}
 	
 
@@ -61,9 +63,8 @@ class Card extends FlxSprite
 	}
 
 	public function addFilter():Void{
-		var glowFilter = new GlowFilter(0xFFFFFF, 1, 16, 16, 1.5, flash.filters.BitmapFilterQuality.HIGH,false,false);
-		_tween = FlxTween.tween(glowFilter , { blurX: 1, blurY: 1},0.3,{ type: FlxTween.PINGPONG });
-		_spriteFilter.addFilter(glowFilter);
+		
+		_spriteFilter.addFilter(_glowFilter);
 	}
 
 	public function clearFilters():Void{
@@ -74,7 +75,7 @@ class Card extends FlxSprite
 	}
 
 	public override function update():Void{
-		_spriteFilter.applyFilters();
+		//_spriteFilter.applyFilters();
 		
 
 	}

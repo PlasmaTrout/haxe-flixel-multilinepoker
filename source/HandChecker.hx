@@ -94,16 +94,16 @@ class HandChecker {
 		var diff = 0;
 		var previous = -1;
 		var cardInOrder = 0;
-		trace(values);
+		//trace(values);
 		for(x in 0...values.length){
 			
 			if(previous == -1){
 				previous = values[x];
-				trace("first card is "+previous);
+				//trace("first card is "+previous);
 				cardInOrder++;
 			}else{
 				diff = values[x] - previous;
-				trace(diff);
+				//trace(diff);
 				previous = values[x];
 				if(diff == 1){
 					cardInOrder++;
@@ -118,7 +118,7 @@ class HandChecker {
 			hasStraight = true;
 		}
 
-		trace("Cards in order "+cardInOrder);
+		//trace("Cards in order "+cardInOrder);
 		return hasStraight;
 	}
 
