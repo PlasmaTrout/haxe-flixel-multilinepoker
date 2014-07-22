@@ -29,15 +29,13 @@ class PlayState extends FlxState
 	private var _handManager:HandManager;
 	private var _scoreManager:ScoreManager;
 	private var _movesManager:MovesManager;
+	private var _levelManager:LevelManager;
 
 	private var _discardArea:FlxSprite;
 	private var _dealButton:FlxSprite;
-	private var _lockbar5:LockBar;
-	private var _lockbar10:LockBar;
-	private var _lockbar20:LockBar;
-	private var _lockbar30:LockBar;
+	
 	private var _maker:DeckMaker;
-	private var _level:Int = 5;
+
 	private var _hands:Array<Array<Card>> = [];
 	private var _clickedCard:HandLocation;
 	
@@ -61,12 +59,13 @@ class PlayState extends FlxState
 		add(_bg);
 		
 		initUILayer();	
-		initLockBars();
 
 		_scoreManager = new ScoreManager(50);
 		_movesManager = new MovesManager();
-		_handManager = new HandManager(new DeckMaker(),_scoreManager,_movesManager);
-		_handManager.deal(_level);
+		_levelManager = new LevelManager(1);
+		_handManager = new HandManager(new DeckMaker(),_scoreManager,_movesManager,_levelManager);
+		
+		_handManager.deal(_levelManager.getLevel());
 		
 
 		super.create();
@@ -93,24 +92,10 @@ class PlayState extends FlxState
 	{
 		_movesManager.update();
 		_scoreManager.update();
+		_levelManager.update();
+		
 		super.update();
-	}
-
-    private function initLockBars():Void{
-    	_lockbar10 = new LockBar((FlxG.stage.stageWidth/2)-275,rowPositions[2]+25,10);
-    	add(_lockbar10);
-
-    	_lockbar5 = new LockBar(_lockbar10.x,rowPositions[1]+25,5);
-    	add(_lockbar5);
-
-    	_lockbar20 = new LockBar(_lockbar10.x,rowPositions[3]+25,20);
-    	add(_lockbar20);
-
-    	_lockbar30 = new LockBar(_lockbar20.x,rowPositions[4]+25,30);
-    	add(_lockbar30);
-    }
-
-    
+	}    
 
 	private function initUILayer():Void{
 		
@@ -148,8 +133,8 @@ class PlayState extends FlxState
 
 	private function dealClicked(object:FlxObject):Void{
 		if(_handManager.canDeal()){
-			_handManager.redeal(_level);
-			_movesManager.setMoves( _level);
+			_handManager.redeal(_levelManager.getLevel());
+			_movesManager.setMoves( _levelManager.getLevel());
 		}
 	}
 

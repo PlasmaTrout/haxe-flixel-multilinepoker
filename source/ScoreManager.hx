@@ -126,6 +126,7 @@ class ScoreManager {
 			animateScore(presult,row);
 			this.addScore(result,row);
 			_previousResult[row] = presult;
+			LevelManager.addXP(presult);
 		}
 	}
 

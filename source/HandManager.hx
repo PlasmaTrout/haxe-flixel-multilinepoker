@@ -22,19 +22,20 @@ class HandManager {
 	private var _isDealLocked:Bool;
 	private var _scoreManager:ScoreManager;
 	private var _movesManager:MovesManager;
+	private var _levelManager:LevelManager;
 	private var _swipeDirection:SwipeDirection = SwipeDirection.None;
 
 	private var rowPositions:Array<Int> = [100,220,340,450,560];
 	
 
-	public function new(deck:DeckMaker,score:ScoreManager,moves:MovesManager){
+	public function new(deck:DeckMaker,score:ScoreManager,moves:MovesManager,lm:LevelManager){
 		_deck = deck;
 		_scoreManager = score;
 		_isDealLocked = false;
 		_clickedLocation = new HandLocation();
 		_swapLocation = new HandLocation();
 		_movesManager = moves;
-
+		_levelManager = lm;
 
 	}
 
@@ -255,7 +256,11 @@ class HandManager {
 		_movesManager.takeMove();
 
 		cardA.clearFilters();
-		cardB.clearFilters();
+		
+		if(cardB != null){
+			cardB.clearFilters();
+		}
+
 		checkHands();
 
 		resetSelection();
