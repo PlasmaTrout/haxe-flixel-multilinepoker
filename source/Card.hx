@@ -64,7 +64,9 @@ class Card extends FlxSprite
 
 	public function addFilter():Void{
 		
-		_spriteFilter.addFilter(_glowFilter);
+		if(_spriteFilter.filters.length == 0){
+			_spriteFilter.addFilter(_glowFilter);
+		}
 	}
 
 	public function clearFilters():Void{

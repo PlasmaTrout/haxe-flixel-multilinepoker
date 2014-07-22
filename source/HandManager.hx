@@ -93,10 +93,9 @@ class HandManager {
 	}
 
 	private function resetSelection():Void{
-		if(_clickedLocation.hasValidSelection()){
-			var card = _clickedLocation.pullCard(_hands);
-			if(card != null){
-				card.clearFilters();
+		for(x in 0..._hands.length){
+			for(y in 0..._hands[x].length){
+				_hands[x][y].clearFilters();
 			}
 		}
 		_clickedLocation.reset();
@@ -179,7 +178,7 @@ class HandManager {
 			// on. See if the new card is only a row or card away. If so swap them
 			// out. (This helps with controller logic later)
 			if(_clickedLocation.hasValidSelection()){
-				_clickedLocation.reset();
+				resetSelection();
 			}
 
 			var card = cast(object,Card);
