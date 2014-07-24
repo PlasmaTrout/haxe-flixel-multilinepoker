@@ -13,6 +13,7 @@ import flash.events.Event;
 import flixel.FlxObject;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSignal;
+import flixel.util.FlxSave;
 using flixel.util.FlxSpriteUtil;
 import flixel.plugin.MouseEventManager;
 
@@ -33,19 +34,35 @@ class LevelManager {
 	private static var _lockbar20:LockBar;
 	private static var _lockbar30:LockBar;
 	public static var _levelSignal:FlxTypedSignal<Int->Void>;
+	private static var _saveGame:FlxSave;
 	
-	public function new(?level:Int=1){
+	public function new(){
+
+		_saveGame = new FlxSave();
+		_saveGame.bind("LatchDCrazyPoker");
+		//trace(_saveGame.data);
 
 		_levelRanges = [0,25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,525,
 		550,575,600,625,650,675,700,725,750,775,800,825,850,875,900];
 
-		_level=level;
+		if(_saveGame.data.level != null){
+			_level = _saveGame.data.level;
+		}else{
+			_level=1;
+		}
+
 		_levelSignal = new FlxTypedSignal<Int->Void>();
 		// These set you xp to approximately what they would have been if you just
 		// jumped in at a specific level. Not only were they needed for testing but
 		// saving levels.
-		_currentXp = _levelRanges[level];
-		_xpTowardsNextLevel = _levelRanges[level-1];
+
+		if(_saveGame.data.xp != null){
+			_currentXp = _saveGame.data.xp;
+			_xpTowardsNextLevel = _saveGame.data.xpn;
+		}else{
+			_currentXp = _levelRanges[_level];
+			_xpTowardsNextLevel = _currentXp - _levelRanges[_level];
+		}
 		
 		_levelText = new FlxText(0,0,-1,"Level 1",32,true);
 		_levelText.font = "IMPACT";
@@ -80,6 +97,9 @@ class LevelManager {
 		_activeLockBar.scaleOverlay(_levelRanges[_level]-_levelRanges[_level-1],_xpTowardsNextLevel);
 		updateLockbars();
 		_levelSignal.dispatch(_level);
+		_saveGame.data.level = _level;
+		
+		_saveGame.flush();
 	}
 
 	public static function addXP(result:PokerResult):Void{
@@ -94,10 +114,16 @@ class LevelManager {
 
 			
 		}
+
+	
 	}
 
 	private static function xpAddCompleted(tween:FlxTween){
+		//trace(_xpTowardsNextLevel);
 		checkLevelUp(_currentXp,_level);
+		_saveGame.data.xp = _currentXp; 
+		_saveGame.data.xpn = _xpTowardsNextLevel;
+		_saveGame.flush();
 	}
 
 	private static function checkLevelUp(_currentXp:Int,_level:Int){

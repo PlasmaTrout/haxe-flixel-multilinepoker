@@ -7,6 +7,7 @@ import flash.events.Event;
 import flash.Lib;
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.util.FlxSave;
 
 class Main extends Sprite 
 {
@@ -25,10 +26,10 @@ class Main extends Sprite
 		Lib.current.addChild(new Main());
 	}
 	
-	public function new() 
+	public function new()
 	{
 		super();
-		
+				
 		if (stage != null) 
 		{
 			init();

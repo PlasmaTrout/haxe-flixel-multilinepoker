@@ -10,6 +10,7 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
 import flixel.FlxObject;
+import flixel.util.FlxSave;
 using flixel.util.FlxSpriteUtil;
 import flixel.plugin.MouseEventManager;
 
@@ -24,6 +25,7 @@ class HandManager {
 	private var _movesManager:MovesManager;
 	private var _levelManager:LevelManager;
 	private var _swipeDirection:SwipeDirection = SwipeDirection.None;
+	private var _saveGame:FlxSave;
 
 	private static var rowPositions:Array<Int> = [100,220,340,450,560];
 	
@@ -36,6 +38,8 @@ class HandManager {
 		_swapLocation = new HandLocation();
 		_movesManager = moves;
 		_levelManager = lm;
+		_saveGame = new FlxSave();
+		_saveGame.bind("LatchDCrazyPoker");
 		LevelManager._levelSignal.add(levelAdvanceCallback);
 
 	}
@@ -45,6 +49,8 @@ class HandManager {
 			addRow();
 			_movesManager.addMoves(2);
 		}
+		_saveGame.data.level = level;
+		_saveGame.flush();
 	}
 
 	public function canDeal():Bool{

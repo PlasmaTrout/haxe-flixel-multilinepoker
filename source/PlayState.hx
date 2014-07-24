@@ -18,6 +18,7 @@ import flash.filters.GlowFilter;
 import flixel.effects.FlxSpriteFilter;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil.LineStyle;
+import flixel.util.FlxSave;
 using flixel.util.FlxSpriteUtil;
 /**
  * A FlxState which can be used for the actual gameplay.
@@ -47,22 +48,25 @@ class PlayState extends FlxState
 	private var _lineSprite:FlxSprite;
 	private var rowPositions:Array<Int> = [100,220,340,450,560];
 	private var _dealLocked:Bool = false;
-	
-	
+	private var _saveGame:FlxSave;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
 	override public function create():Void
 	{
+
+		_saveGame = new FlxSave();
+		_saveGame.bind("LatchDCrazyPoker");
+
 		_bg = new FlxSprite(0,0,"assets/images/Background3.png");
 		add(_bg);
 		
 		initUILayer();	
 
-		_scoreManager = new ScoreManager(50);
+		_scoreManager = new ScoreManager();
 		_movesManager = new MovesManager();
-		_levelManager = new LevelManager(1);
+		_levelManager = new LevelManager();
 		_handManager = new HandManager(new DeckMaker(),_scoreManager,_movesManager,_levelManager);
 		
 		_handManager.deal(_levelManager.getLevel());
@@ -82,6 +86,7 @@ class PlayState extends FlxState
 	 */
 	override public function destroy():Void
 	{
+		trace("Im being destroyed!!!!");
 		super.destroy();
 	}
 

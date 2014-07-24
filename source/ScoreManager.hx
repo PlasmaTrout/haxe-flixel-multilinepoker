@@ -9,6 +9,8 @@ import flixel.util.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
+import flixel.util.FlxSave;
+
 using flixel.util.FlxSpriteUtil;
 
 class ScoreManager {
@@ -19,11 +21,18 @@ class ScoreManager {
 	private var _score:Int;
 	private var _bet:Int;
 	private var _previousResult:Array<PokerResult>;
-	
+	private var _saveGame:FlxSave;
 
-	public function new(?score:Int=0){
-		
-		_score = score;
+	public function new(){
+	
+		_saveGame = new FlxSave();
+		_saveGame.bind("LatchDCrazyPoker");
+
+		if(_saveGame.data.score != null){
+			_score = _saveGame.data.score;
+		}else{
+			_score = 0;
+		}
 
 		_scoreText = new FlxText(Constants.SCREEN_PAD, Constants.SCREEN_PAD ,-1,"SCORE",36,true);
 		_scoreText.font = "IMPACT";
@@ -83,7 +92,11 @@ class ScoreManager {
 		   			_score = Std.int(x);
 
 		   		});
+		   		_saveGame.data.score = _score+score;
+				_saveGame.flush();
 		   	}});
+
+		
 	}
 
 	private function animateScore(result:PokerResult,r:Int):Void{
