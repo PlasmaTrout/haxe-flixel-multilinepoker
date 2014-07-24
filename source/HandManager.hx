@@ -53,6 +53,8 @@ class HandManager {
 
 	public function deal(_level:Int):Void{
 
+		resetSelection();
+		
 		_isDealLocked = true;
 		resetSelection();
 		_deck.shuffle(10);
@@ -184,7 +186,7 @@ class HandManager {
 	}
 
 	private function cardClicked(object:FlxObject):Void{
-		trace("Click on "+object);
+		//trace("Click on "+object);
 		if(_movesManager.canMove()){
 			
 			// If there is a pre-existing selection and another care is clicked
@@ -196,7 +198,7 @@ class HandManager {
 
 			var card = cast(object,Card);
 			_clickedLocation = findSelection(card);
-			trace(_clickedLocation);
+			//trace(_clickedLocation);
 
 		}
 

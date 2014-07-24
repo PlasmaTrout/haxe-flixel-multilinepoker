@@ -14,7 +14,7 @@
 	<!--------------------------------WINDOW SETTINGS------------------------------->
 	
 	<!--These window settings apply to all targets-->
-	<window width="1024" height="768" fps="30" background="#000000" hardware="false" vsync="true" orientation="landscape" antialiasing="4" allow-shaders="true" require-shaders="true" depth-buffer="false" />
+	<window width="1024" height="768" fps="60" background="#000000" hardware="false" vsync="true" orientation="landscape" antialiasing="4" allow-shaders="true" require-shaders="true" depth-buffer="false" />
 	
 	<!--Web-specific-->
 	<window if="web" orientation="landscape" resizable="false" />

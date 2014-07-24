@@ -11,7 +11,7 @@ class HandLocation {
 
 	public function pullCard(hand:Array<Array<Card>>):Card{
 		var card = null;
-		trace("trying to get row "+_y+" and card "+_x);
+		//trace("trying to get row "+_y+" and card "+_x);
 		card = hand[_y][_x];
 
 		return card;

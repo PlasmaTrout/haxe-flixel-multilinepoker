@@ -52,6 +52,7 @@ class LevelManager {
 
 		_currentXpText = new FlxText(0,0,-1,"0xp",24,true);
 		_currentXpText.font = "IMPACT";
+		_currentXpText.alignment = "center";
 		
 		_xpTable = [ "Pair"=>10, "TwoPair"=>20, "Triple"=>30,"Straight"=>40,"Flush"=>50,
 		"StraightFlush"=>100,"RoyalFlush"=>200 ];
@@ -84,7 +85,7 @@ class LevelManager {
 	public static function addXP(result:PokerResult):Void{
 		var value = _xpTable[Std.string(result)];
 		_currentXp = _currentXp+value;
-		trace(Std.string(result)+"="+value);
+		//trace(Std.string(result)+"="+value);
 		if(value != null){
 			FlxTween.num(_xpTowardsNextLevel,_xpTowardsNextLevel+value,1,{ complete: xpAddCompleted, ease: FlxEase.quadInOut },function(x){
 				_xpTowardsNextLevel = Std.int(x);
@@ -101,7 +102,7 @@ class LevelManager {
 
 	private static function checkLevelUp(_currentXp:Int,_level:Int){
 
-		trace(_currentXp+">="+_levelRanges[_level]+" with "+_xpTowardsNextLevel);
+		//trace(_currentXp+">="+_levelRanges[_level]+" with "+_xpTowardsNextLevel);
 
 		if(_currentXp >= _levelRanges[_level]){
 			levelUp();
@@ -134,7 +135,7 @@ class LevelManager {
 			_lockbar30.destroy();
 		}
 
-		_currentXpText.x = (_lockbar5.x+_lockbar5.width)-(_currentXpText.width+20);
+		_currentXpText.x = (_lockbar5.x+_lockbar5.width)-(_currentXpText.width+40);
 
 	}
 
