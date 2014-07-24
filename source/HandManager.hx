@@ -129,7 +129,10 @@ class HandManager {
 		return location;
 	}
 
-	public function discardSelectedCard(){
+	public function discardSelectedCard():Bool{
+
+		var discarded = false;
+
 		if(_clickedLocation.hasValidSelection()){
 			var card = _clickedLocation.pullCard(_hands);
 			_deck.discard([card]);
@@ -139,9 +142,11 @@ class HandManager {
 			_hands[_clickedLocation._y].sort(DeckMaker.cardSort);
 			
 			animateHands();
-
+			discarded = true;
 			resetSelection();
 		}
+
+		return discarded;
 	}
 
 	public function addRow(){

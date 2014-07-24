@@ -139,8 +139,10 @@ class PlayState extends FlxState
 	}
 
 	private function discardReleased(object:FlxObject):Void{
-		_movesManager.takeMove();
-		_handManager.discardSelectedCard();
+
+		if(_handManager.discardSelectedCard()){
+			_movesManager.takeMove();
+		}
 	}
 	
 }

@@ -33,7 +33,9 @@ class MovesManager {
 	}
 
 	public function takeMove(){
-		_moves = _moves - 1;
+		if(_moves > 0){
+			_moves = _moves - 1;
+		}
 	}
 
 	public function canMove():Bool{
