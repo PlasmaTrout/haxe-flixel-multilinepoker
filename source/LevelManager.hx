@@ -22,18 +22,27 @@ class LevelManager {
 	private static var _currentXp:Int;
 	private static var _levelRanges:Array<Int>;
 	private static var _xpTable:Map<String,Int>;
-	private var _levelText:FlxText;
-	private var _currentXpText:FlxText;
+	private static var _levelText:FlxText;
+	private static var _currentXpText:FlxText;
 	public static var _xpTowardsNextLevel:Int;
 	private static var _xpTween:flixel.tweens.misc.NumTween;
 	private static var _activeLockBar:LockBar;
-	private var _lockbar5:LockBar;
-	private var _lockbar10:LockBar;
-	private var _lockbar20:LockBar;
-	private var _lockbar30:LockBar;
+	private static var _lockbar5:LockBar;
+	private static var _lockbar10:LockBar;
+	private static var _lockbar20:LockBar;
+	private static var _lockbar30:LockBar;
 	
 	public function new(?level:Int=1){
+
+		_levelRanges = [0,25,50,75,100,125,150,175,200];
+
 		_level=level;
+
+		// These set you xp to approximately what they would have been if you just
+		// jumped in at a specific level. Not only were they needed for testing but
+		// saving levels.
+		_currentXp = _levelRanges[level];
+		_xpTowardsNextLevel = _levelRanges[level-1];
 		
 		_levelText = new FlxText(0,0,-1,"Level 1",32,true);
 		_levelText.font = "IMPACT";
@@ -41,14 +50,9 @@ class LevelManager {
 		_currentXpText = new FlxText(0,0,-1,"0xp",24,true);
 		_currentXpText.font = "IMPACT";
 		
-		
-		_currentXp = 0;
-		_xpTowardsNextLevel = 0;
-		
 		_xpTable = [ "Pair"=>10, "TwoPair"=>20, "Triple"=>30,"Straight"=>40,"Flush"=>50,
 		"StraightFlush"=>100,"RoyalFlush"=>200 ];
-		_levelRanges = [0,25,45,70,100,130];
-
+		
 		initLockBars();
 		
 
@@ -70,6 +74,7 @@ class LevelManager {
 		_xpTowardsNextLevel = _currentXp-_levelRanges[_level];
 		_level = _level+1;
 		_activeLockBar.scaleOverlay(_levelRanges[_level]-_levelRanges[_level-1],_xpTowardsNextLevel);
+		updateLockbars();
 	}
 
 	public static function addXP(result:PokerResult):Void{
@@ -100,13 +105,17 @@ class LevelManager {
 		}
 	}
 
-	private function placeLevelText(){
+	private static function placeLevelText(){
 
 		_levelText.x = _lockbar5.x+20;
 
 		if(_level < 5){
 			_levelText.y = _lockbar5.y+12;
 			_currentXpText.y = _lockbar5.y+18;
+		}else if((_level >= 5) &&  (_level < 10)){
+			_levelText.y = _lockbar10.y+12;
+			_currentXpText.y = _lockbar10.y+18;
+			_lockbar5.destroy();
 		}
 
 		_currentXpText.x = (_lockbar5.x+_lockbar5.width)-(_currentXpText.width+20);
@@ -126,18 +135,38 @@ class LevelManager {
     	_lockbar30 = new LockBar(_lockbar20.x,Constants.ROW_POSITIONS[4]+25,30);
     	FlxG.state.add(_lockbar30);
 
+    	
+    	FlxG.state.add(_levelText);
+    	FlxG.state.add(_currentXpText);
+    	updateLockbars();
+    }
+
+    private static function clearLocks(){
+    	_lockbar5.removeXpBarOverlay();
+    	_lockbar10.removeXpBarOverlay();
+    	_lockbar20.removeXpBarOverlay();
+    	_lockbar30.removeXpBarOverlay();
+    }
+
+    private static function updateLockbars(){
+
+    	clearLocks();
+
     	if(_level < 5){
     		_lockbar5.showXpBarOverlay();
     		_activeLockBar = _lockbar5;
-
-
+    	}else if(_level >=5 ){
+    		_lockbar10.showXpBarOverlay();
+    		_activeLockBar = _lockbar10;
+    	}else if(_level >= 10){
+    		_lockbar20.showXpBarOverlay();
+    		_activeLockBar = _lockbar20;
+    	}else if(_level >=20){
+    		_lockbar30.showXpBarOverlay();
+    		_activeLockBar = _lockbar30;
     	}
 
     	_activeLockBar.scaleOverlay(getXpRange(),_xpTowardsNextLevel);
-
-    	FlxG.state.add(_levelText);
-    	FlxG.state.add(_currentXpText);
-
     	placeLevelText();
     }
 

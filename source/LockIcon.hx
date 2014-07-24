@@ -41,4 +41,5 @@ class LockIcon extends FlxSprite {
 		FlxG.state.remove(_lockLevelText);
 		FlxG.state.remove(this);
 	}
+
 }

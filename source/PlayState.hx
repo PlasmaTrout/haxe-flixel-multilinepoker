@@ -62,7 +62,7 @@ class PlayState extends FlxState
 
 		_scoreManager = new ScoreManager(50);
 		_movesManager = new MovesManager();
-		_levelManager = new LevelManager(1);
+		_levelManager = new LevelManager(4);
 		_handManager = new HandManager(new DeckMaker(),_scoreManager,_movesManager,_levelManager);
 		
 		_handManager.deal(_levelManager.getLevel());

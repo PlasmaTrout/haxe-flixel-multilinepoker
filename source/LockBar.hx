@@ -14,8 +14,7 @@ using flixel.util.FlxSpriteUtil;
 
 
 class LockBar extends FlxSprite {
-
-	private var _lockIcon:FlxSprite;
+	
 	private var _lock:LockIcon;
 	private var _level:Int;
 	private var _xpFill:FlxBar;
@@ -33,6 +32,15 @@ class LockBar extends FlxSprite {
 	public function showXpBarOverlay(){
 		//trace("added");
 		FlxG.state.add(_xpFill);
+	}
+
+	public override function destroy(){
+		_lock.destroy();
+		FlxG.state.remove(this);
+	}
+
+	public function removeXpBarOverlay(){
+		FlxG.state.remove(_xpFill);
 	}
 
 	public function scaleOverlay(xpRange:Float, currentXp:Float){
