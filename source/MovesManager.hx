@@ -40,6 +40,10 @@ class MovesManager {
 		return _moves > 0;
 	}
 
+	public function addMoves(moves:Int){
+		_moves = _moves+moves;
+	}
+
 	public function setMoves(_level:Int){
 		if(_level > 5){
 			_moves = 2 + Std.int((_level / 5));

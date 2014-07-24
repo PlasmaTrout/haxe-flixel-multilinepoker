@@ -15,8 +15,8 @@ import flixel.plugin.MouseEventManager;
 
 class HandManager {
 	
-	public var _deck:DeckMaker;
-	public var _hands:Array<Array<Card>> = [];
+	public static var _deck:DeckMaker;
+	public static var _hands:Array<Array<Card>> = [];
 	public var _clickedLocation:HandLocation;
 	public var _swapLocation:HandLocation;
 	private var _isDealLocked:Bool;
@@ -25,7 +25,7 @@ class HandManager {
 	private var _levelManager:LevelManager;
 	private var _swipeDirection:SwipeDirection = SwipeDirection.None;
 
-	private var rowPositions:Array<Int> = [100,220,340,450,560];
+	private static var rowPositions:Array<Int> = [100,220,340,450,560];
 	
 
 	public function new(deck:DeckMaker,score:ScoreManager,moves:MovesManager,lm:LevelManager){
@@ -36,7 +36,15 @@ class HandManager {
 		_swapLocation = new HandLocation();
 		_movesManager = moves;
 		_levelManager = lm;
+		LevelManager._levelSignal.add(levelAdvanceCallback);
 
+	}
+
+	public function levelAdvanceCallback(level:Int){
+		if(level == 5 || level == 10 || level == 20 || level == 30){
+			addRow();
+			_movesManager.addMoves(2);
+		}
 	}
 
 	public function canDeal():Bool{
@@ -132,6 +140,11 @@ class HandManager {
 
 			resetSelection();
 		}
+	}
+
+	public function addRow(){
+		_hands.push(_deck.deal(5));
+		animateHands();
 	}
 
 	private function animateHands():Void{

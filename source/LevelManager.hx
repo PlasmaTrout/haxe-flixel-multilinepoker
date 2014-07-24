@@ -12,6 +12,7 @@ import flixel.tweens.FlxEase;
 import flash.events.Event;
 import flixel.FlxObject;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxSignal;
 using flixel.util.FlxSpriteUtil;
 import flixel.plugin.MouseEventManager;
 
@@ -31,13 +32,15 @@ class LevelManager {
 	private static var _lockbar10:LockBar;
 	private static var _lockbar20:LockBar;
 	private static var _lockbar30:LockBar;
+	public static var _levelSignal:FlxTypedSignal<Int->Void>;
 	
 	public function new(?level:Int=1){
 
-		_levelRanges = [0,25,50,75,100,125,150,175,200];
+		_levelRanges = [0,25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,525,
+		550,575,600,625,650,675,700,725,750,775,800,825,850,875,900];
 
 		_level=level;
-
+		_levelSignal = new FlxTypedSignal<Int->Void>();
 		// These set you xp to approximately what they would have been if you just
 		// jumped in at a specific level. Not only were they needed for testing but
 		// saving levels.
@@ -75,6 +78,7 @@ class LevelManager {
 		_level = _level+1;
 		_activeLockBar.scaleOverlay(_levelRanges[_level]-_levelRanges[_level-1],_xpTowardsNextLevel);
 		updateLockbars();
+		_levelSignal.dispatch(_level);
 	}
 
 	public static function addXP(result:PokerResult):Void{
@@ -116,6 +120,18 @@ class LevelManager {
 			_levelText.y = _lockbar10.y+12;
 			_currentXpText.y = _lockbar10.y+18;
 			_lockbar5.destroy();
+		}else if((_level >=10)&&(_level < 20)){
+			_levelText.y = _lockbar20.y+12;
+			_currentXpText.y = _lockbar20.y+18;
+			_lockbar10.destroy();
+		}else if((_level >=20)&&(_level < 30)){
+			_levelText.y = _lockbar30.y+12;
+			_currentXpText.y = _lockbar30.y+18;
+			_lockbar20.destroy();
+		}else if((_level >=30)){
+			_levelText.y = _lockbar30.y+12;
+			_currentXpText.y = _lockbar30.y+18;
+			_lockbar30.destroy();
 		}
 
 		_currentXpText.x = (_lockbar5.x+_lockbar5.width)-(_currentXpText.width+20);
@@ -155,15 +171,18 @@ class LevelManager {
     	if(_level < 5){
     		_lockbar5.showXpBarOverlay();
     		_activeLockBar = _lockbar5;
-    	}else if(_level >=5 ){
+    	}else if((_level >=5) && (_level < 10)){
     		_lockbar10.showXpBarOverlay();
     		_activeLockBar = _lockbar10;
-    	}else if(_level >= 10){
+    		
+    	}else if((_level >= 10) && (_level < 20)){
     		_lockbar20.showXpBarOverlay();
     		_activeLockBar = _lockbar20;
-    	}else if(_level >=20){
+    		
+    	}else if((_level >=20) && (_level < 30)){
     		_lockbar30.showXpBarOverlay();
     		_activeLockBar = _lockbar30;
+    		
     	}
 
     	_activeLockBar.scaleOverlay(getXpRange(),_xpTowardsNextLevel);
