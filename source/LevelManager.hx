@@ -73,7 +73,7 @@ class LevelManager {
 		_currentXpText.alignment = "center";
 		
 		_xpTable = [ "None"=>0,"Pair"=>10, "TwoPair"=>20, "Triple"=>30,"Straight"=>40,"Flush"=>50,
-		"StraightFlush"=>100,"FourOfAKind"=>100,"RoyalFlush"=>200 ];
+		"FullHouse"=>80,"StraightFlush"=>100,"FourOfAKind"=>100,"RoyalFlush"=>200 ];
 		
 		initLockBars();
 		
