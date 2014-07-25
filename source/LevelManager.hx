@@ -40,7 +40,7 @@ class LevelManager {
 
 		_saveGame = new FlxSave();
 		_saveGame.bind("LatchDCrazyPoker");
-		//trace(_saveGame.data);
+		trace(_saveGame.data);
 
 		_levelRanges = [0,25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,525,
 		550,575,600,625,650,675,700,725,750,775,800,825,850,875,900];
@@ -60,8 +60,9 @@ class LevelManager {
 			_currentXp = _saveGame.data.xp;
 			_xpTowardsNextLevel = _saveGame.data.xpn;
 		}else{
-			_currentXp = _levelRanges[_level];
-			_xpTowardsNextLevel = _currentXp - _levelRanges[_level];
+			_currentXp = 0;
+			_xpTowardsNextLevel = _levelRanges[1] - _currentXp;
+			writeXp();
 		}
 		
 		_levelText = new FlxText(0,0,-1,"Level 1",32,true);
@@ -71,8 +72,8 @@ class LevelManager {
 		_currentXpText.font = "IMPACT";
 		_currentXpText.alignment = "center";
 		
-		_xpTable = [ "Pair"=>10, "TwoPair"=>20, "Triple"=>30,"Straight"=>40,"Flush"=>50,
-		"StraightFlush"=>100,"RoyalFlush"=>200 ];
+		_xpTable = [ "None"=>0,"Pair"=>10, "TwoPair"=>20, "Triple"=>30,"Straight"=>40,"Flush"=>50,
+		"StraightFlush"=>100,"FourOfAKind"=>100,"RoyalFlush"=>200 ];
 		
 		initLockBars();
 		
@@ -84,7 +85,13 @@ class LevelManager {
 	}
 
 	public static function getXpRange():Int{
-		return _levelRanges[_level+1]-_levelRanges[_level];
+
+		if(_currentXp > _levelRanges[_level+1]){
+			return _currentXp;
+		}else{
+			return _levelRanges[_level+1]-_levelRanges[_level];
+		}
+		
 	}
 
 	public function getCurrentXp():Int{
@@ -97,9 +104,7 @@ class LevelManager {
 		_activeLockBar.scaleOverlay(_levelRanges[_level]-_levelRanges[_level-1],_xpTowardsNextLevel);
 		updateLockbars();
 		_levelSignal.dispatch(_level);
-		_saveGame.data.level = _level;
-		
-		_saveGame.flush();
+		writeXp();
 	}
 
 	public static function addXP(result:PokerResult):Void{
@@ -118,12 +123,21 @@ class LevelManager {
 	
 	}
 
+	private static function writeXp(){
+		_saveGame.data.xp = _currentXp; 
+		_saveGame.data.xpn = _xpTowardsNextLevel;
+		_saveGame.data.level = _level;
+		_saveGame.flush(100,saveComplete);
+	}
+
+	private static function saveComplete(bool:Bool):Void{
+		trace("saved "+bool);
+	}
+
 	private static function xpAddCompleted(tween:FlxTween){
 		//trace(_xpTowardsNextLevel);
 		checkLevelUp(_currentXp,_level);
-		_saveGame.data.xp = _currentXp; 
-		_saveGame.data.xpn = _xpTowardsNextLevel;
-		_saveGame.flush();
+		writeXp();	
 	}
 
 	private static function checkLevelUp(_currentXp:Int,_level:Int){

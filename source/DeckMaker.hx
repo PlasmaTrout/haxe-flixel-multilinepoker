@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
+import flixel.util.FlxRandom;
 using flixel.util.FlxSpriteUtil;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
@@ -18,7 +19,7 @@ class DeckMaker {
 	public function new(){
 		initialize();
 		addCardsToDisplay();
-		shuffleDeck();
+		shuffle(10);
 	}
 
 	private function initialize() {
@@ -32,22 +33,7 @@ class DeckMaker {
 	}
 
 	public function shuffle(times:Int){
-		for(c in 0...times){
-			shuffleDeck();
-		}
-	}
-
-	public function shuffleDeck(){
-		var value = Math.floor(Math.random() * 20);
-		value = value + 20;
-		
-		var side1:Array<Card> = Deck.splice(0,value);
-
-		for(x in 0...side1.length){
-			var spot = Math.floor(Math.random() * Deck.length);
-			Deck.insert(spot, side1[x]);
-			//trace(Deck.length+" to spot "+spot);	
-		}
+		Deck = FlxRandom.shuffleArray(Deck,times);
 	}
 
 	public function deal(number:Int):Array<Card>{

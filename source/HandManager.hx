@@ -11,6 +11,8 @@ import flixel.tweens.FlxEase;
 import flash.events.Event;
 import flixel.FlxObject;
 import flixel.util.FlxSave;
+import flixel.input.mouse.FlxMouse;
+import flixel.FlxCamera;
 using flixel.util.FlxSpriteUtil;
 import flixel.plugin.MouseEventManager;
 
@@ -49,8 +51,8 @@ class HandManager {
 			addRow();
 			_movesManager.addMoves(2);
 		}
-		_saveGame.data.level = level;
-		_saveGame.flush();
+		//FlxG.camera.shake(0.01,0.3,null,true, FlxCamera.SHAKE_BOTH_AXES );
+		
 	}
 
 	public function canDeal():Bool{

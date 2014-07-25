@@ -56,6 +56,8 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 
+		FlxG.debugger.visible = true;
+
 		_saveGame = new FlxSave();
 		_saveGame.bind("LatchDCrazyPoker");
 

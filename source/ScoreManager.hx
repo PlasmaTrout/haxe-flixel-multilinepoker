@@ -10,6 +10,7 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
 import flixel.util.FlxSave;
+import flixel.util.FlxRandom;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -75,6 +76,8 @@ class ScoreManager {
 		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 42 , true);
 		//scoreText.color = FlxColor.YELLOW;
 		scoreText.font = "IMPACT";
+		scoreText.color = FlxRandom.color();
+		
 		FlxG.state.add(scoreText);
 
 		/*FlxTween.tween(scoreText,{ x: _scoreValueText.x, y: _scoreValueText.y, size: 48 },0.5,
@@ -88,12 +91,13 @@ class ScoreManager {
 		   { complete: function(x){
 		   		FlxG.state.remove(scoreText);
 		   		var newScore = _score+score;
+		   		
 		   		FlxTween.num(_score,newScore,0.2,{ ease: FlxEase.cubeInOut},function(x){
 		   			_score = Std.int(x);
 
 		   		});
 		   		_saveGame.data.score = _score+score;
-				_saveGame.flush();
+				//_saveGame.flush();
 		   	}});
 
 		
