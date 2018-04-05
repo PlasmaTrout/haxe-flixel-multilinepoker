@@ -5,12 +5,12 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
 import flixel.util.FlxSave;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -51,7 +51,7 @@ class ScoreManager {
 
 	public function resetFloaters():Void{
 		for(f in 0..._floaters.length){
-			_floaters[f].screenCenter(true,false);
+			_floaters[f].screenCenter(null);
 			_floaters[f].size = 100;
 			_floaters[f].alpha = 0;
 			_previousResult[f] = PokerResult.None;
@@ -76,7 +76,7 @@ class ScoreManager {
 		var scoreText = new FlxText( _floaters[floater].x , _floaters[floater].y , -1 , "+"+Std.string(score) , 42 , true);
 		//scoreText.color = FlxColor.YELLOW;
 		scoreText.font = "IMPACT";
-		scoreText.color = FlxRandom.color();
+		//scoreText.color = FlxRandom.color(null,null,null,null);
 		
 		FlxG.state.add(scoreText);
 
@@ -88,7 +88,7 @@ class ScoreManager {
 		FlxTween.cubicMotion( scoreText , 800 , scoreText.y ,
 		 1024, 50, 100 , 10 ,
 		  _scoreValueText.x+50 , 0, 1.0 ,
-		   { complete: function(x){
+		   { onComplete: function(x){
 		   		FlxG.state.remove(scoreText);
 		   		var newScore = _score+score;
 		   		
@@ -110,7 +110,7 @@ class ScoreManager {
 			FlxTween.tween(_floaters[r],{ size: 48, x: 800 },0.1,{ ease: FlxEase.bounceOut });
 		}else{
 			_floaters[r].alpha = 0;
-			_floaters[r].screenCenter(true,false);
+			_floaters[r].screenCenter(null);
 		}
 	}
 

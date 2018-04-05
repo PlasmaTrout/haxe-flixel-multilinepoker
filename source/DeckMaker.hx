@@ -5,8 +5,8 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
-import flixel.util.FlxRandom;
+import flixel.math.FlxMath;
+import flixel.math.FlxRandom;
 using flixel.util.FlxSpriteUtil;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
@@ -15,8 +15,11 @@ class DeckMaker {
 
 	private var Deck:Array<Card> = [];
 	private var _hands:Array<Array<Card>> = [];
+	private var _random:FlxRandom;
 
 	public function new(){
+		_random = new FlxRandom();
+
 		initialize();
 		addCardsToDisplay();
 		shuffle(10);
@@ -33,7 +36,7 @@ class DeckMaker {
 	}
 
 	public function shuffle(times:Int){
-		Deck = FlxRandom.shuffleArray(Deck,times);
+		Deck = _random.shuffleArray(Deck,times);
 	}
 
 	public function deal(number:Int):Array<Card>{

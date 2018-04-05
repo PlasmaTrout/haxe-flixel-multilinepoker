@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
@@ -14,7 +14,7 @@ import flixel.util.FlxSave;
 import flixel.input.mouse.FlxMouse;
 import flixel.FlxCamera;
 using flixel.util.FlxSpriteUtil;
-import flixel.plugin.MouseEventManager;
+import flixel.input.mouse.FlxMouseEventManager;
 
 class HandManager {
 	
@@ -180,7 +180,7 @@ class HandManager {
 				//trace("Animating card "+card+" in row "+row);
 				if(row == (_hands.length-1) && card == 4){
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
-					1.2,{ease: FlxEase.elasticOut, startDelay: delay, complete: dealComplete });
+					1.2,{ease: FlxEase.elasticOut, startDelay: delay, onComplete: dealComplete });
 				}else{
 					currentCard.centerOrigin();
 					FlxTween.tween(currentCard,{ x: horizontalPositions[card], y: rowPositions[row]},
@@ -188,7 +188,7 @@ class HandManager {
 				}
 				
 				delay = delay + 0.03;
-				MouseEventManager.add(currentCard, cardClicked,cardReleased,cardEnter,cardLeave);
+				FlxMouseEventManager.add(currentCard, cardClicked,cardReleased,cardEnter,cardLeave);
 			}
 		}
 	}

@@ -5,17 +5,16 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
 import flixel.FlxObject;
-import flixel.plugin.MouseEventManager;
+import flixel.input.mouse.FlxMouseEventManager;
 import flash.filters.BitmapFilter;
 import flash.filters.BlurFilter;
 import flash.filters.DropShadowFilter;
 import flash.filters.GlowFilter;
-import flixel.effects.FlxSpriteFilter;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil.LineStyle;
 import flixel.util.FlxSave;
@@ -43,7 +42,6 @@ class PlayState extends FlxState
 	private var _results:Array<PokerResult> = [PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None,PokerResult.None];
 	
 	private var _glowFilter:GlowFilter;
-	private var _spriteFilter:FlxSpriteFilter;
 	
 	private var _lineSprite:FlxSprite;
 	private var rowPositions:Array<Int> = [100,220,340,450,560];
@@ -95,13 +93,13 @@ class PlayState extends FlxState
 	/**
 	 * Function that is called once every frame.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
 		_movesManager.update();
 		_scoreManager.update();
 		_levelManager.update();
 		
-		super.update();
+		super.update(1.0);
 	}    
 
 	private function initUILayer():Void{
@@ -120,7 +118,7 @@ class PlayState extends FlxState
 		add(_discardArea);
 
 
-		MouseEventManager.add( _dealButton , dealClicked);
+		FlxMouseEventManager.add( _dealButton , dealClicked);
 
 		// The discard area has transparencies. In flixel if the alpha channel is set then
 		// clicks won't register on the transparent part. Have to hide an object underneath it
@@ -133,7 +131,7 @@ class PlayState extends FlxState
 		invisDiscardBox.width = _discardArea.width;
 
 		add(invisDiscardBox);
-		MouseEventManager.add( invisDiscardBox , null , discardReleased);
+		FlxMouseEventManager.add( invisDiscardBox , null , discardReleased);
 	}	
 
 	

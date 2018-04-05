@@ -6,7 +6,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flash.events.Event;
@@ -15,7 +15,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxSignal;
 import flixel.util.FlxSave;
 using flixel.util.FlxSpriteUtil;
-import flixel.plugin.MouseEventManager;
 
 
 class LevelManager {
@@ -112,7 +111,7 @@ class LevelManager {
 		_currentXp = _currentXp+value;
 		//trace(Std.string(result)+"="+value);
 		if(value != null){
-			FlxTween.num(_xpTowardsNextLevel,_xpTowardsNextLevel+value,1,{ complete: xpAddCompleted, ease: FlxEase.quadInOut },function(x){
+			FlxTween.num(_xpTowardsNextLevel,_xpTowardsNextLevel+value,1,{ onComplete: xpAddCompleted, ease: FlxEase.quadInOut },function(x){
 				_xpTowardsNextLevel = Std.int(x);
 				_activeLockBar.scaleOverlay(getXpRange(),x);
 			});
